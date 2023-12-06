@@ -1,14 +1,30 @@
+# creds.py
+# looks in home/.creds/atlasian_creds.json for tokens and connect
+# Sample json:
+'''
+{
+    "atlassian_username": "john.doe@mail.com",
+    "jira_token":         "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "wiki_token":         "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+    "jira_page":          "https://johndoe.atlassian.net"
+}
+'''
+
 import os
 import json
 
 class Creds:
   def __init__(self):
-    self.json_file_path=os.environ["HOME"] + "/.creds/atlassian_creds.json"
+    self.json_file_path=os.path.join(os.environ["HOME"],
+                                     ".creds",
+                                     "atlassian_creds.json")
     self.username = None
     self.password = None
     self.jira_token = None
     self.wiki_token = None
     self.jira_page = None
+
+    #print(self.json_file_path)
 
     if os.path.exists(self.json_file_path):
       with open(self.json_file_path) as json_file:

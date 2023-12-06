@@ -1,0 +1,53 @@
+[
+    {
+        "title": "Row",
+        "field": "row",
+        "width": 4,
+        "type": "int"
+    },
+    {
+        "title": "Key",
+        "field": "key",
+        "width": 16,
+        "type" : "str"
+    },
+    {
+        "title": "Type",
+        "field": "issuetype",
+        "width": 12,
+        "type": "str"
+    },
+    {
+        "title": "Summary",
+        "field": "summary",
+        "width": 60,
+        "type": "str"
+    },
+    {
+        "title": "Status",
+        "field": "status",
+        "width": 14,
+        "type": "str"
+    },
+    {
+        "title": "Points",
+        "field": "customfield_10016",
+        "width": 6,
+        "type": "float",
+        "precision": 1
+    },
+    {
+        "title": "Labels",
+        "field": "labels",
+        "width": 10,
+        "type": "list",
+	      "precision": 10
+    },
+    {
+        "title": "Assignee",
+        "field": "assignee",
+        "width": 20,
+        "type": "str"
+    }
+]
+

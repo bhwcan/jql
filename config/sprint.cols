@@ -1,0 +1,46 @@
+[
+    {
+        "title": "Row",
+        "field": "row",
+        "width": 4,
+        "type": "int"
+    },
+    {
+        "title": "Key",
+        "field": "key",
+        "width": 16,
+        "type" : "str"
+    },
+    {
+        "title": "Type",
+        "field": "issuetype",
+        "width": 15,
+        "type": "str"
+    },
+    {
+        "title": "Summary",
+        "field": "summary",
+        "width": 60,
+        "type": "str"
+    },
+    {
+        "title": "Status",
+        "field": "status",
+        "width": 17,
+        "type": "str"
+    },
+    {
+        "title": "Points",
+        "field": "customfield_10106",
+        "width": 6,
+        "type": "float",
+        "precision": 1
+    },
+    {
+        "title": "Sprints",
+        "field": "customfield_10020",
+        "width": 40,
+        "type": "list"
+    }
+]
+

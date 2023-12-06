@@ -1,0 +1,28 @@
+{
+    "sprint": {
+        "query": [
+            "sprint in opensprints() order by rank"
+        ],
+        "columns": "sprint.cols"
+    },
+    "backlog": {
+        "query": [
+            "sprint is EMPTY and ",
+            "type not in (Epic) and ",
+            "status not in (\"Done\") order by rank"
+        ],
+        "columns": "default.cols"
+    },
+    "epics": {
+        "query": [
+            "type = Epic and status not in (\"Closed\") order by rank"
+        ],
+        "columns": "default.cols"
+    },
+    "all": {
+        "query": [
+            "created >= -30d order by created DESC"
+        ],
+        "columns": "default.cols"
+    }
+}
