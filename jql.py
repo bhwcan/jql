@@ -37,7 +37,6 @@ class JQL:
     self.pagesize = 20
     self.cols = []
     self.queries = {}
-    self.trackedfields = ['Sprint', 'Story Points', 'assignee', 'status']
 
   def isCommand(self):
     #print(self.response)
@@ -92,12 +91,12 @@ class JQL:
   def issuewalk(self, i, level=0):
 
     self.treeprint(i, level)
-    childquery = "\"Parent Link\" = " + i['key']
+    childquery = "parent = " + i['key']
     data = self.jira.jql(childquery)
     for issue in data['issues']:
       self.issuewalk(issue, level+1)
     
-  def trackIssue(self, key):
+  def commentIssue(self, key):
     
     ijql = "id = " + key.upper()
 
@@ -108,120 +107,27 @@ class JQL:
       return
 
     fields = data['issues'][0]['fields']
-    points = ""
-    if fields['customfield_10106']:
-      points = "{:.1f}".format(fields['customfield_10106'])
-    ct = datetime.strptime(fields['created'][:19],'%Y-%m-%dT%H:%M:%S')
-    typeis = fields['issuetype']['name']
-    if fields['issuetype']['subtask']:
-      typeis = "{} of {}".format(fields['issuetype']['name'], fields['parent']['key'])
-    #print("tracked changes", self.trackedfields)
-    #exit(1)
 
-    pt = ct
-    rct = None
-    rctby = ""
-    opentime = pt - ct
-    dt = opentime
-    dct = opentime
+    comments = fields['comment']['comments']
 
-    inSprint = False
-    sprintTime = opentime
-    sprintCount = 0
-    inDev = False
-    devTime = opentime
-    inBlock = False
-    blockTime = opentime
+    for comment in comments:
 
-    print("\t", ct, fields['creator']['displayName'], "created" )
+      cd = comment['created'][:10]
+      ct = comment['created'][11:16]
 
-    changelog = self.jira.get_issue_changelog(key)
-    for jiraChange in changelog['histories']:
+      author = comment['author']['displayName']
+      body = comment['body']
 
-      #pprint.pprint(jiraChange)
-      #exit(10)
-      tracked = False
-      #print("\n", "changed timestamp", jiraChange['created'][:19], "by", jiraChange['author']['displayName'])
-      for items in jiraChange['items']:
+      print(cd, ct, '-', author)
 
-        # log changes
-        outstr = jiraChange['created'][:10] +" " + jiraChange['created'][11:19] + " " +\
-          jiraChange['author']['displayName'] + " changed " + items['field']
-        if items['field'] != "description" and items['field'] != "summary":
-          if items['fromString']:
-            outstr += " from \'" + items['fromString'] + "\'"
-          if items['toString']:
-            outstr += " to \'" + items['toString'] + "\'"
-        print("\t", outstr)
+      desclines = body.splitlines()
+      for line in desclines:
+        if len(line) > 100:
+          for l in textwrap.wrap(line,100):
+            print("\t",l)
+        else:
+          print("\t",line)
 
-        if items['field'] in self.trackedfields:
-          #print("\t[{}]".format(items['field']), "to", '"{}"'.format(items['toString']))
-          tracked = True
-        #else:
-        #  print("\t[{}]".format(items['field']))
-      if tracked:
-        nt = datetime.strptime(jiraChange['created'][:19],'%Y-%m-%dT%H:%M:%S')
-        dt = nt - pt
-        dct = nt - ct
-        #print("elapsed time since last tracked is", dt, "since created is", dct, "In Sprint", inSprint, "In Dev", inDev)
-        if inSprint:
-          sprintTime += dt
-        if inDev:
-          devTime += dt
-        if inBlock:
-          blockTime += dt
-        pt = nt
-
-      for items in jiraChange['items']:
-        if items['field'] == "Sprint":
-          if len(items['toString']) > 0:
-            inSprint = True
-            sprintCount += 1
-          else:
-            inSprint = False
-        if items['field'] == "status":
-          if items['toString'] in ['In Development', 'Ready For Testing', 'Testing']:
-            inDev = True
-          else:
-            inDev = False
-          if items['toString'] in ['Blocked', 'Test Blocked']:
-            inBlock = True
-          else:
-            inBlock = False
-          if items['toString'] == "Closed":
-            inSprint = False
-            opentime = dct
-            rct = nt
-            rctby = jiraChange['author']['displayName']
-
-    nt = datetime.now()
-    dt = nt - pt
-    dct = nt - ct
-    if opentime.seconds <= 0:
-      opentime = dct
-    if inSprint:
-      sprintTime += dt
-    if inDev:
-      devTime += dt
-    if inBlock:
-      blockTime += dt
-    
-    #print("elapsed time since last tracked is", dt, "since created is", dct, "In Sprint", inSprint, "In Dev", inDev)
-    assignee = "Unasigned"
-    if fields['assignee']:
-      assignee = fields['assignee']['displayName']
-    print("\nFinal status", key.upper(), fields['status']['name'], typeis, "assignee", assignee, "Story Points", points)
-    print(fields['summary'], "\n")
-    if rct:
-      print("Closed on", rct, "by", rctby)
-      print("Since created to closed time", opentime)
-    else:
-      print("Since created", opentime)
-    print("In Sprint time", sprintTime, "for", sprintCount, "sprints")
-    print("In Development time", devTime)
-    if blockTime.seconds > 0:
-      print("Blocked time", blockTime)
-    
     return
 
   def printIssue(self, key):
@@ -265,13 +171,15 @@ class JQL:
       labels = ", ".join(fields['labels'])
     print("{:20.20}{:30.30}".format("Reporter:",report))
     print("{:20.20}{:}".format("Labels:",labels))
-    epic = "None"
-    if fields['customfield_10101']:
-        epic = fields['customfield_10101']
+    parent_type = "Parent"
+    parent_key = "None"
+    if 'parent' in fields:
+      parent_key = fields['parent']['key']
+      parent_type = fields['parent']['fields']['issuetype']['name']
     created = "None"
     if fields['created']:
         created=fields['created'][0:10]+" "+fields['created'][11:16]
-    print("{:20.20}{:30.30}{:20.20}{:}".format("Epic Link:",epic,"Created:",created))
+    print("{:20.20}{:30.30}{:20.20}{:}".format(parent_type + " Link:",parent_key,"Created:",created))
     severity = "None"
     if fields['priority']:
         severity = fields['priority']['name']
@@ -279,13 +187,6 @@ class JQL:
     if fields['updated']:
         updated = fields['updated'][0:10]+" "+fields['updated'][11:16]
     print("{:20.20}{:30.30}{:20.20}{:}".format("Severity:",severity,"Updated:",updated))
-    points = ""
-    if fields['customfield_10106']:
-        points = "{:.1f}".format(fields['customfield_10106'])
-    resolved="None"
-    if fields['resolutiondate']:
-        resolved = fields['resolutiondate'][0:10]+" "+fields['resolutiondate'][11:16]
-    print("{:20.20}{:30.30}{:20.20}{:}".format("Story Points:",points,"Resolved:",resolved))
     if fields['description']:
         desclines = fields['description'].splitlines()
         print("\nDescription\n-----------")
@@ -361,8 +262,8 @@ class JQL:
     print("\tcmds: display this nice list of commands")
     print("!dump")
     print("\t<jira_issue> <search_string>: dictionary pretty print of the issue fields with search")
-    print("!track")
-    print("\t<jira_issue>: real time tracking of changes")
+    print("!comment")
+    print("\t<jira_issue>: print out comments")
     print("!tree")
     print("\t<jira_issue>: print out parent link relationship")
     print("!print")
@@ -407,9 +308,9 @@ class JQL:
         if len(cmds) > 1:
           self.printIssue(cmds[1])
           r = True
-      elif cmds[0] == "track":
+      elif cmds[0] == "comment":
         if len(cmds) > 1:
-          self.trackIssue(cmds[1])
+          self.commentIssue(cmds[1])
           r = True
       elif cmds[0] == "tree":
         if len(cmds) > 1:

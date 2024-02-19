@@ -41,7 +41,7 @@
         "field": "labels",
         "width": 10,
         "type": "list",
-	      "precision": 10
+        "precision": 10
     },
     {
         "title": "Assignee",
