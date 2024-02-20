@@ -269,7 +269,7 @@ class JQL:
     print("!print")
     print("\t<jira_issue>: formatted print of jira issue")
     print("!load")
-    print("\tcols: loads columns from json file", self.colspath)
+    print("\tcols <filename>: loads columns from json filename or default", self.colspath)
     print("!run")
     print("\tname: run named save query from", self.querypath)
     print("!set")
@@ -622,7 +622,7 @@ jql = JQL()
 def wait():
   ar = ""
   d = m.getch()
-  if os.name == "nt":
+  if os.name.lower() == "nt":
     # emergency exit for debug
     if d == b'!':
       exit(6)

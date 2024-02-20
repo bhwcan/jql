@@ -5,7 +5,6 @@
 {
     "atlassian_username": "john.doe@mail.com",
     "jira_token":         "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-    "wiki_token":         "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
     "jira_page":          "https://johndoe.atlassian.net"
 }
 '''

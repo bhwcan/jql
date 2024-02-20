@@ -1,3 +1,6 @@
+
+  self.trackedfields = ['Sprint', 'Story Points', 'assignee', 'status']
+
   def trackIssue(self, key):
     
     ijql = "id = " + key.upper()
