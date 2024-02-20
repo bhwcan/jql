@@ -16,16 +16,18 @@ jql is a command line interface to JQL Atlassian's Jira Query Language. It needs
 ## Programs
 
 jql.py - main program
+
 creds.py - Atlassian credentials
 
 ## Credentials
 
-creds.py looks in os.environ["HOME"]/.creds/atlasian\_creds.json for tokens and connect strings. 
+creds.py looks in **os.environ["HOME"]/.creds/atlasian\_creds.json** for tokens and connect strings. 
 
 Three entries are needed for JQL:
-    #atlassian\_username: jira identification
-    #jira\_token: jira API token
-    #jira\_page: connection url
+
+# atlassian\_username: jira identification
+# jira\_token: jira API token
+# jira\_page: connection url
 
 ### Sample json:
 
@@ -165,7 +167,7 @@ This is the default.cols file in HOME/.jql from the example. Most fields from Ji
 
 ## Saved Queries
 
-A useful feature in jql was the ability to save commonly used queries. The queries have to be manually entered into the queries.json file in the HOME/.jql directory. 
+A useful feature in jql is the ability to save commonly used queries. The queries have to be manually entered into the queries.json file in the HOME/.jql directory. 
 
 ### !list queries
 
