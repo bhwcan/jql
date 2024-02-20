@@ -1,6 +1,6 @@
 # jql
 
-jql is a command line interface to JQL Atlassian's Jira Query Language. It needs to be able to authenticate with a Jira instance, and then at the JQL> prompt you type your query. I developed this when I was writing company custom Jira reports and found it very useful to be able to query JQL and and see the issue information from within my development environment.
+jql is a command line interface to JQL Atlassian's Jira Query Language. It needs to be able to authenticate with a Jira instance, and then at the JQL> prompt you type your query. I developed this when I was writing company custom Jira reports and found it very useful to be able to query JQL and see the issue information from within my development environment.
 
 ## Dependancies
 
@@ -25,9 +25,9 @@ creds.py looks in **os.environ["HOME"]/.creds/atlasian\_creds.json** for tokens 
 
 Three entries are needed for JQL:
 
-# atlassian\_username: jira identification
-# jira\_token: jira API token
-# jira\_page: connection url
+1. atlassian\_username: jira identification
+2. jira\_token: jira API token
+3. jira\_page: connection url
 
 ### Sample json:
 
